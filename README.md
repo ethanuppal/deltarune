@@ -2,6 +2,13 @@
 
 ![Suspicious Susie saying Like, uh, hey, maybe things took a recreated in Bevy right now...](./assets/susie_dialogue.png)
 
+## Tentative roadmap
+
+- [ ] Get the sprites in the window
+- [ ] Get the sprites in the right place
+- [ ] Get the basic functionality working in some order
+- [ ] Add animations
+
 ## Animations to replicate
 
 - [ ] Each party member GUI slides up and down

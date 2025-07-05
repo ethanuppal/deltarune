@@ -12,29 +12,29 @@ const DELTARUNE_HEIGHT: usize = 480;
 const DELTARUNE_PIXEL_SIZE: usize = 2;
 const RANDOM_SCALE_ON_MY_COMPUTER: usize = 2;
 
-// https://github.com/adrien-bon/bevy_ecs_tiled/blob/ee458ad464e8ea7cea22c7923efb911945b5d710/examples/physics_avian_controller.rs#L96C1-L117C2
-#[derive(Default, Debug, Clone, Reflect)]
-#[reflect(Default, Debug)]
-struct MyCustomAvianPhysicsBackend(TiledPhysicsAvianBackend);
-
-impl TiledPhysicsBackend for MyCustomAvianPhysicsBackend {
-    fn spawn_colliders(
-        &self,
-        commands: &mut Commands,
-        tiled_map: &TiledMap,
-        filter: &TiledNameFilter,
-        collider: &TiledCollider,
-        anchor: &TilemapAnchor,
-    ) -> Vec<TiledColliderSpawnInfos> {
-        let colliders = self
-            .0
-            .spawn_colliders(commands, tiled_map, filter, collider, anchor);
-        for c in &colliders {
-            commands.entity(c.entity).insert(RigidBody::Static);
-        }
-        colliders
-    }
-}
+// // https://github.com/adrien-bon/bevy_ecs_tiled/blob/ee458ad464e8ea7cea22c7923efb911945b5d710/examples/physics_avian_controller.rs#L96C1-L117C2
+// #[derive(Default, Debug, Clone, Reflect)]
+// #[reflect(Default, Debug)]
+// struct MyCustomAvianPhysicsBackend(TiledPhysicsAvianBackend);
+//
+// impl TiledPhysicsBackend for MyCustomAvianPhysicsBackend {
+//     fn spawn_colliders(
+//         &self,
+//         commands: &mut Commands,
+//         tiled_map: &TiledMap,
+//         filter: &TiledNameFilter,
+//         collider: &TiledCollider,
+//         anchor: &TilemapAnchor,
+//     ) -> Vec<TiledColliderSpawnInfos> {
+//         let colliders = self
+//             .0
+//             .spawn_colliders(commands, tiled_map, filter, collider, anchor);
+//         for c in &colliders {
+//             commands.entity(c.entity).insert(RigidBody::Static);
+//         }
+//         colliders
+//     }
+// }
 
 fn main() {
     let mut app = App::new();
@@ -52,10 +52,10 @@ fn main() {
         }),
         ..default()
     }))
-    // Add bevy_ecs_tiled plugin: note that bevy_ecs_tilemap::TilemapPlugin
-    // will be automatically added as well if it's not already done
-    .add_plugins(TiledMapPlugin::default())
-    .add_plugins(TiledPhysicsPlugin::<MyCustomAvianPhysicsBackend>::default())
+    // // Add bevy_ecs_tiled plugin: note that bevy_ecs_tilemap::TilemapPlugin
+    // // will be automatically added as well if it's not already done
+    // .add_plugins(TiledMapPlugin::default())
+    // .add_plugins(TiledPhysicsPlugin::<MyCustomAvianPhysicsBackend>::default())
     // Load Avian main plugin
     .add_plugins(PhysicsPlugins::default().with_length_unit(100.0))
     .add_plugins((
@@ -63,7 +63,7 @@ fn main() {
         PhysicsDiagnosticsPlugin,
         PhysicsDiagnosticsUiPlugin,
     ))
-    .insert_resource(Gravity(Vector::NEG_Y * 100.0))
+    .insert_resource(Gravity(Vector::ZERO))
     // Add our startup function to the schedule and run the app
     .add_systems(Startup, startup)
     .add_systems(Update, (keys_to_pause_time));

@@ -1,6 +1,6 @@
 # delta rune
 
-![Suspicious Susie saying Like, uh, hey, maybe things took a recreated in Bevy right now...](./assets/susie_dialogue.png)
+![Suspicious Susie saying Like, uh, hey, maybe things took a recreated in Bevy right now...](./assets/readme/susie_dialogue.png)
 
 ## Tentative roadmap
 

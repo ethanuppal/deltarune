@@ -1,10 +1,13 @@
 [package]
 name = "deltarune"
+authors = ["Ethan Uppal"]
+description = "Random fan battle I'm making"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 bevy = { version = "0.16", features = ["file_watcher", "dynamic_linking"] }
+bevy_aseprite_ultra = "0.6.1"
 bevy_ecs_tiled = { version = "0.7", features = ["avian", "avian_debug"] }
 bevy_ecs_tilemap = "0.16"
 avian2d = { version = "0.3", features = ["diagnostic_ui"] }

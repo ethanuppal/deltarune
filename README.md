@@ -18,6 +18,7 @@
 - [ ] Fight mode bar has a trail that it leaves behind, and when you enter fight mode Kris readies their sword
 - [ ] When you attack, the rectangle attack area flashes white, Kris swings their sword, then a slash appears over the knight (along with the damage)
 - [ ] In general there's animations for all the different modes, like defending causes Kris's sword to become a shield
+- [ ] Rude buster
 
 ## Assets/Credits
 

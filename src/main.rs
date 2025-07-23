@@ -6,9 +6,10 @@ use avian2d::{math::Vector, prelude::*};
 use bevy::{
     image::ImageSamplerDescriptor,
     prelude::*,
+    sprite::Anchor,
     window::{PrimaryWindow, WindowResolution},
 };
-use bevy_aseprite_ultra::{prelude::AseSlice, AsepriteUltraPlugin};
+use bevy_aseprite_ultra::{AsepriteUltraPlugin, prelude::AseSlice};
 use bevy_ecs_tiled::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 
@@ -40,6 +41,43 @@ const RANDOM_SCALE_ON_MY_COMPUTER: usize = 2;
 //         colliders
 //     }
 // }
+
+#[derive(Component)]
+struct GMSCoordinatesProcessed;
+
+struct GMSCoordinatesPlugin;
+
+fn set_gms_camera(
+    mut commands: Commands,
+    mut query: Query<Entity, (With<Camera2d>, Without<GMSCoordinatesProcessed>)>,
+    window: Query<&Window, With<PrimaryWindow>>,
+) {
+    let Some(entity) = query.single_mut().ok() else {
+        return;
+    };
+    let window = window.single().expect("Missing primary window");
+
+    commands.entity(entity).insert((
+        Transform::from_xyz(-window.width() / 2.0, -window.height() / 2.0, 0.0),
+        GMSCoordinatesProcessed,
+    ));
+}
+
+fn set_global_sprite_anchor(
+    mut commands: Commands,
+    mut query: Query<(&mut Sprite, Entity), Without<GMSCoordinatesProcessed>>,
+) {
+    for (mut sprite, entity) in &mut query {
+        sprite.anchor = Anchor::TopLeft;
+        commands.entity(entity).insert(GMSCoordinatesProcessed);
+    }
+}
+
+impl Plugin for GMSCoordinatesPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(PostUpdate, (set_gms_camera, set_global_sprite_anchor));
+    }
+}
 
 fn main() {
     let mut app = App::new();
@@ -76,6 +114,7 @@ fn main() {
         PhysicsDiagnosticsUiPlugin,
     ))
     .insert_resource(Gravity(Vector::ZERO))
+    // .add_plugins(GMSCoordinatesPlugin)
     // Add our startup function to the schedule and run the app
     .add_systems(Startup, startup)
     .add_systems(Update, (keys_to_pause_time));
@@ -94,45 +133,37 @@ fn main() {
 
 fn startup(
     mut commands: Commands,
-    window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     mut time: ResMut<Time<Physics>>,
 ) {
     time.pause();
 
-    let window = window_query.get_single().unwrap();
-
-    let width = window.width();
-    let height = window.height();
-
-    // Spawn a Bevy 2D camera
     commands.spawn(Camera2d);
 
     let battle_hud_aseprite = asset_server.load("dr_battle_hud.aseprite");
 
-    commands.spawn((
-        AseSlice {
-            name: "background".into(),
-            aseprite: battle_hud_aseprite.clone(),
-        },
-        Sprite::default(),
-        Transform::from_scale(Vec3::ONE * (RANDOM_SCALE_ON_MY_COMPUTER as f32)),
-    ));
+    let background = commands
+        .spawn((
+            AseSlice {
+                name: "background".into(),
+                aseprite: battle_hud_aseprite.clone(),
+            },
+            Sprite::default(),
+            Transform::from_scale(Vec3::ONE * (RANDOM_SCALE_ON_MY_COMPUTER as f32)),
+        ))
+        .id();
 
-    commands.spawn((
-        AseSlice {
-            name: "tp_red_background".into(),
-            aseprite: battle_hud_aseprite,
-        },
-        Sprite::default(),
-        Transform::from_scale(Vec3::ONE * (RANDOM_SCALE_ON_MY_COMPUTER as f32)).with_translation(
-            Vec3::new(
-                -width / 2.0 + 38.0 * (RANDOM_SCALE_ON_MY_COMPUTER as f32),
-                -height / 2.0 + 244.0 * (RANDOM_SCALE_ON_MY_COMPUTER as f32),
-                0.0,
-            ),
-        ),
-    ));
+    // commands.spawn((
+    //     AseSlice {
+    //         name: "tp_red_background".into(),
+    //         aseprite: battle_hud_aseprite,
+    //     },
+    //     Sprite {
+    //         anchor: Anchor::TopLeft,
+    //         ..Default::default()
+    //     },
+    //     Transform::from_scale(Vec3::ONE * (RANDOM_SCALE_ON_MY_COMPUTER as f32)),
+    // ));
 
     // // Load a map asset and retrieve the corresponding handle
     // let map_handle: Handle<TiledMap> = asset_server.load("test_level.tmx");
